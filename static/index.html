@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#08a652" />
+    <title>СберАссистент — корпоративный ИИ-сервис</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+</head>
+
+<body>
+    <div id="toastRoot" class="toast-root"></div>
+
+    <section id="loginScreen" class="login-screen">
+        <div class="login-brand">
+            <div class="brand-noise"></div>
+            <div class="login-brand-inner">
+                <div class="brand-logo">
+                    <img class="brand-mark" src="./sber-logo.png"></img>
+                </div>
+                <div class="login-copy">
+                    <span class="eyebrow eyebrow--light">Цифровое рабочее место</span>
+                    <h1>СберАссистент</h1>
+                    <p>Единая точка входа к корпоративным знаниям, задачам и рабочим сервисам.</p>
+                </div>
+                <div class="login-features">
+                    <div><span>01</span><b>Ответы с источниками</b><small>Поиск и анализ документов с учётом прав доступа</small></div>
+                    <div><span>02</span><b>Рабочие сценарии</b><small>Онбординг, встречи, файлы и задачи в одном интерфейсе</small></div>
+                    <div><span>03</span><b>Безопасный контур</b><small>Ролевой доступ, подтверждения и журнал действий</small></div>
+                </div>
+            </div>
+        </div>
+        <div class="login-panel">
+            <div class="login-card">
+                <div class="login-card-head">
+                    <span class="mobile-logo"><span class="brand-mark"><i></i></span> СБЕР</span>
+                    <span class="eyebrow">Вход для сотрудников</span>
+                    <h2>Добро пожаловать</h2>
+                </div>
+                <form id="loginForm" class="login-form">
+                    <label>Логин<input id="loginUsername" name="username" autocomplete="username" placeholder="NewSber1" required /></label>
+                    <label>Пароль<div class="password-field"><input id="loginPassword" name="password" type="password" autocomplete="current-password" placeholder="Введите пароль" required /><button type="button" id="togglePassword" aria-label="Показать пароль">◉</button></div></label>
+                    <div id="loginError" class="form-error hidden"></div>
+                    <button class="btn btn--primary btn--large" type="submit"><span>Войти</span><span>→</span></button>
+                </form>
+                <div class="demo-access">
+                    <div class="section-label">Демо-доступы</div>
+                    <div id="demoAccounts" class="demo-accounts"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="appShell" class="app-shell hidden">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-top">
+                <button id="sidebarClose" class="icon-btn sidebar-close" aria-label="Закрыть меню">×</button>
+                  <img class="brand-mark-sidebar" src="./sber-logo.png"></img>
+                <span class="product-name">Ассистент</span>
+            </div>
+            <nav id="mainNav" class="main-nav"></nav>
+            <div class="sidebar-bottom">
+                <button id="logoutButton" class="user-card user-card--button">
+                    <span id="sidebarAvatar" class="avatar"></span>
+                    <span class="user-card-copy"><b id="sidebarUserName"></b><small id="sidebarUserRole"></small></span>
+                    <span class="logout-icon">Выйти из аккаунта</span>
+                </button>
+            </div>
+        </aside>
+
+        <div id="sidebarBackdrop" class="sidebar-backdrop"></div>
+
+        <main class="main-area">
+            <header class="topbar">
+                <button id="menuButton" class="icon-btn menu-button" aria-label="Открыть меню">☰</button>
+                <div class="topbar-title"><small id="breadcrumb">Рабочее пространство</small>
+                    <h2 id="pageTitle">Главная</h2>
+                </div>
+                <div class="topbar-actions">
+                    <button class="search-launch" data-nav="assistant"><span>⌕</span><span>Спросить ассистента</span><kbd>Ctrl K</kbd></button>
+                    <button id="helpButton" class="icon-btn" title="О сервисе">?</button>
+                    <span id="topAvatar" class="avatar avatar--small"></span>
+                </div>
+            </header>
+            <div id="content" class="content"></div>
+        </main>
+    </div>
+
+    <dialog id="documentDialog" class="dialog">
+        <button class="dialog-close" data-close-dialog="documentDialog">×</button>
+        <div id="documentDialogContent"></div>
+    </dialog>
+
+    <dialog id="uploadDialog" class="dialog dialog--compact">
+        <button class="dialog-close" data-close-dialog="uploadDialog">×</button>
+        <div class="dialog-header"><span class="eyebrow">База знаний</span>
+            <h3>Добавить документ</h3>
+            <p>Текст будет извлечён, разбит на фрагменты и добавлен в поиск.</p>
+        </div>
+        <form id="uploadForm" class="stack-form">
+            <label>Название<input name="title" required placeholder="Например, Регламент командировок" /></label>
+            <div class="form-grid"><label>Теги<input name="tags" placeholder="HR, командировка, заявление" /></label><label>Версия<input name="version" value="1.0" /></label></div>
+            <label>Доступ для ролей<select name="roles">
+                    <option value="all">Все сотрудники</option>
+                    <option value="newcomer,employee,manager">Бизнес-пользователи</option>
+                    <option value="developer,admin">ИТ и администраторы</option>
+                    <option value="expert,admin">Эксперты и администраторы</option>
+                </select></label>
+            <label class="file-drop"><input name="file" type="file" accept=".pdf,.docx,.xlsx,.csv,.txt,.md" required /><span class="file-drop-icon">⇧</span><b>Выберите файл</b><small>PDF, DOCX, XLSX, CSV, TXT или MD · до 12 МБ</small></label>
+            <div class="dialog-actions"><button type="button" class="btn btn--secondary" data-close-dialog="uploadDialog">Отмена</button><button type="submit" class="btn btn--primary">Загрузить и индексировать</button></div>
+        </form>
+    </dialog>
+
+    <dialog id="taskDialog" class="dialog dialog--compact">
+        <button class="dialog-close" data-close-dialog="taskDialog">×</button>
+        <div class="dialog-header"><span class="eyebrow">Новая задача</span>
+            <h3>Добавить в личный список</h3>
+        </div>
+        <form id="taskForm" class="stack-form">
+            <label>Название<input name="title" required placeholder="Что нужно сделать" /></label>
+            <label>Описание<textarea name="description" rows="3" placeholder="Контекст и ожидаемый результат"></textarea></label>
+            <div class="form-grid"><label>Приоритет<select name="priority">
+                        <option value="low">Низкий</option>
+                        <option value="medium" selected>Средний</option>
+                        <option value="high">Высокий</option>
+                    </select></label><label>Срок<input name="due_date" type="date" /></label></div>
+            <div class="dialog-actions"><button type="button" class="btn btn--secondary" data-close-dialog="taskDialog">Отмена</button><button type="submit" class="btn btn--primary">Создать задачу</button></div>
+        </form>
+    </dialog>
+
+    <dialog id="aboutDialog" class="dialog dialog--compact">
+        <button class="dialog-close" data-close-dialog="aboutDialog">×</button>
+        <div class="dialog-header"><span class="eyebrow">О сервисе</span>
+            <h3>СберАссистент MVP</h3>
+        </div>
+        <div class="about-content">
+            <p>Прототип корпоративного ИИ-ассистента с ролевым доступом, RAG-поиском, онбордингом, анализом документов, суммаризацией встреч и задачами.</p>
+            <div class="info-banner"><span>i</span>
+                <p>В локальном режиме ответы синтезируются из найденных фрагментов. Для подключения генеративной модели укажите корпоративный LLM-шлюз в файле <code>.env</code>.</p>
+            </div>
+        </div>
+    </dialog>
+
+    <script src="/static/app.js"></script>
+</body>
+
+</html>
